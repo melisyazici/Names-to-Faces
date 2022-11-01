@@ -17,11 +17,36 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     }
     
     @objc func addNewPerson() {
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) { // if the camera option is available
+            let ac = UIAlertController(title: "Source", message: nil, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Photos", style: .default, handler: { [weak self, weak ac] _ in
+                self?.showPickerOptions(fromCamera: false) // if the user selects photos, camera won't turn on
+            }))
+            
+            ac.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self, weak ac] _ in
+                self?.showPickerOptions(fromCamera: true) // if the user selects camera, camera will turn on
+            }))
+            
+            ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            
+            present(ac, animated: true)
+        } else { // if the camera option is not available
+            showPickerOptions(fromCamera: false)
+        }
+    }
+    
+    func showPickerOptions(fromCamera: Bool) {
         let picker = UIImagePickerController()
-        picker.allowsEditing = true // allows the user to crop the picture they select
-        picker.delegate = self // set self as the delegate
+        picker.allowsEditing = true
+        picker.delegate = self
+        if fromCamera {
+            picker.sourceType = .camera
+        }
+        
         present(picker, animated: true)
     }
+    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.editedImage] as? UIImage else { return } // attempt to find the edited image in the dictionary that passed in and typecast to the UIImage
