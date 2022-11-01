@@ -71,6 +71,23 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         return cell
     }
+    
+    // triggered when the user taps a cell
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let person = people[indexPath.item]
+        
+        let ac = UIAlertController(title: "Rename person", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self, weak ac] _ in
+            guard let newName = ac?.textFields?[0].text else { return } // pulls out the text field value
+            person.name = newName // assign it to the person's name property
+            self?.collectionView.reloadData() // reload the collection view to reflect the change
+        }))
+        
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(ac, animated: true)
+        
+    }
 
 
 }
