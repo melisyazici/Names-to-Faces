@@ -8,6 +8,7 @@
 import UIKit
 
 class ViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    var people = [Person]() // to store all the people in the app
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +34,10 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
             try? jpedData.write(to: imagePath) // write to the disk
         }
         
+        let person = Person(name: "Unknown", image: imageName) // create any person instance passing an unknown name and the image name
+        people.append(person) // append it to the people array
+        collectionView.reloadData() // reload the collection view
+        
         dismiss(animated: true) // dismiss the topmost view controller
     }
     
@@ -44,7 +49,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     
     // -- Collection View -- //
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return people.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
