@@ -76,8 +76,25 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let person = people[indexPath.item]
         
-        let ac = UIAlertController(title: "Rename person", message: nil, preferredStyle: .alert)
+        let ac = UIAlertController(title: "Person", message: nil, preferredStyle: .alert)
+//        ac.addTextField()
+        ac.addAction(UIAlertAction(title: "Rename Person", style: .default, handler: { [weak self, weak ac] _ in
+            self?.renamePerson(person)
+        }))
+        
+        ac.addAction(UIAlertAction(title: "Delete Person", style: .default, handler: { [weak self, weak ac] _ in
+            self?.deletePerson(at: indexPath)
+        }))
+        
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        present(ac, animated: true)
+    }
+    
+    func renamePerson(_ person: Person) {
+        let ac = UIAlertController(title: "Person's name:", message: nil, preferredStyle: .alert)
         ac.addTextField()
+        
         ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self, weak ac] _ in
             guard let newName = ac?.textFields?[0].text else { return } // pulls out the text field value
             person.name = newName // assign it to the person's name property
@@ -86,7 +103,17 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(ac, animated: true)
+    }
+    
+    func deletePerson(at indexPath: IndexPath) {
+        let ac = UIAlertController(title: "Are you sure you want to delete the person?", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        ac.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [weak self, weak ac] _ in
+            self?.people.remove(at: indexPath.item)
+            self?.collectionView.reloadData()
+        }))
         
+        present(ac, animated: true)
     }
 
 
