@@ -7,13 +7,42 @@
 
 import UIKit
 
-class ViewController: UICollectionViewController {
+class ViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
     }
     
+    @objc func addNewPerson() {
+        let picker = UIImagePickerController()
+        picker.allowsEditing = true // allows the user to crop the picture they select
+        picker.delegate = self // set self as the delegate
+        present(picker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let image = info[.editedImage] as? UIImage else { return } // attempt to find the edited image in the dictionary that passed in and typecast to the UIImage
+        
+        let imageName = UUID().uuidString // uuidString property to extract the unique identifier as a string data type
+        let imagePath = getDocumentsDirectory().appendingPathComponent(imageName) // to read documents directory for the app and append to that file name "imageName"
+        
+        // convert the UIImage to a Data object so it can be saved
+        if let jpedData = image.jpegData(compressionQuality: 0.8) {
+            try? jpedData.write(to: imagePath) // write to the disk
+        }
+        
+        dismiss(animated: true) // dismiss the topmost view controller
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask) // FileManager.default.urls -> ask for the documents directory. We want the path to be relative to the user's home directory
+        return paths[0] // returns an array that nearly contains only one thing: the user's documents directory. Pull out the first element and return it.
+    }
+    
+    
+    // -- Collection View -- //
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
