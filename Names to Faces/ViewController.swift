@@ -29,6 +29,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
             }))
             
             ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            ac.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem // for the ipad compatibility
             
             present(ac, animated: true)
         } else { // if the camera option is not available
@@ -112,6 +113,14 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         }))
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        // for ipad compatibility
+        if let popoverController = ac.popoverPresentationController {
+            if let cellView = collectionView.cellForItem(at: indexPath) {
+                popoverController.sourceView = cellView
+                popoverController.sourceRect = CGRect(x: cellView.bounds.midX, y: cellView.bounds.midY, width: 0, height: 0)
+            }
+        }
         
         present(ac, animated: true)
     }
